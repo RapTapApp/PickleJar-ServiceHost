@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "ServiceHost": {
+      "commandName": "Project",
+      "preLaunchTask": "build",
+      "request": "launch"
+    }
+  }
+}

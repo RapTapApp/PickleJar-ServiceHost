@@ -1,0 +1,8 @@
+﻿<Project>
+  <PropertyGroup>
+    <AppendTargetFrameworkToOutputPath>False</AppendTargetFrameworkToOutputPath>
+
+    <BaseOutputPath>..\.bin\$(MsBuildProjectName)</BaseOutputPath>
+    <BaseIntermediateOutputPath>..\.int\$(MsBuildProjectName)</BaseIntermediateOutputPath>
+  </PropertyGroup>
+</Project>
