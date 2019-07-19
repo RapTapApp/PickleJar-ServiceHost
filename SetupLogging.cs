@@ -9,7 +9,8 @@ namespace PickleJar.ServiceHost
 {
     public class SetupLogging : IDisposable
     {
-        const string EventLogSourceName = "PickleJar-ServiceHost-EventLog";
+        const string EventLogSource = "PickleJar-ServiceHost";
+        const string EventLogName = "PickleJar";
 
         public static IDisposable BeginScope()
         {
@@ -21,9 +22,13 @@ namespace PickleJar.ServiceHost
                 .MinimumLevel.ControlledBy(logSwitch);
                 
             // Outputs
-            logConfig.WriteTo.Console(standardErrorFromLevel: LogEventLevel.Error, levelSwitch: logSwitch, theme: AnsiConsoleTheme.Code); // outputTemplate: ConsoleTemplate, 
+            logConfig.WriteTo.Console(standardErrorFromLevel: LogEventLevel.Error, levelSwitch: logSwitch, theme: AnsiConsoleTheme.Literate); 
             logConfig.WriteTo.Debug(LogEventLevel.Debug);
-            logConfig.WriteTo.EventLog(EventLogSourceName);
+
+            if (EventLog.SourceExists(EventLogSource) && EventLog.Exists(EventLogName))
+            {
+                logConfig.WriteTo.EventLog(EventLogSource, EventLogName);
+            }
 
             Log.Logger = logConfig.CreateLogger();
 
@@ -46,11 +51,11 @@ namespace PickleJar.ServiceHost
         {
             Log.Information("Logging => AfterInstall");
 
-            if (!EventLog.SourceExists(EventLogSourceName))
+            if (!EventLog.SourceExists(EventLogSource))
             {
-                EventLog.CreateEventSource(EventLogSourceName, EventLogSourceName);
+                EventLog.CreateEventSource(EventLogSource, EventLogName);
 
-                Log.Information("Logging => Created EventLog '{EventLogSourceName}'", EventLogSourceName);
+                Log.Information("Logging => Created EventSource: '{EventLogSource}'", EventLogSource);
             }
         }
 
@@ -58,11 +63,11 @@ namespace PickleJar.ServiceHost
         {
             Log.Information("Logging => BeforeUninstall");
 
-            if (EventLog.SourceExists(EventLogSourceName))
+            if (EventLog.SourceExists(EventLogSource))
             {
-                EventLog.DeleteEventSource(EventLogSourceName);
+                EventLog.DeleteEventSource(EventLogSource);
 
-                Log.Information("Logging => Deleted EventLog '{EventLogSourceName}'", EventLogSourceName);
+                Log.Information("Logging => Deleted EventSource '{EventLogSource}'", EventLogSource);
             }
         }
     }
